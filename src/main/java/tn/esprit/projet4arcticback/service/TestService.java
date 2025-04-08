@@ -1,12 +1,19 @@
 package tn.esprit.projet4arcticback.service;
 
+import tn.esprit.projet4arcticback.dto.*;
 import tn.esprit.projet4arcticback.entity.Test;
 import java.util.List;
 
 public interface TestService {
-    List<Test> getAllTests();
-    Test getTestById(Long id);
-    Test createTest(Test test);
-    Test updateTest(Long id, Test test);
-    void deleteTest(Long id);
+    public testDTO createTest(testDTO dto);
+    public QuestionDTO addQuestionInTest(QuestionDTO dto);
+
+    public List<testDTO> getAllTests();
+
+    public TestDetailsDTO getAllQuestionsByTest(Long id);
+
+    public TestResultDTO submitTest(SubmitTestDTO request);
+
+    public List<TestResultDTO> getAllTestResults();
+    public void deleteTest(Long id);
 }

@@ -2,6 +2,9 @@ package tn.esprit.projet4arcticback.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import tn.esprit.projet4arcticback.dto.testDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;  // Add the import for Jackson
+
 import java.util.List;
 
 @Entity
@@ -15,11 +18,32 @@ public class Test {
     private Long time;
 
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore  // Prevent serialization of questions
     private List<Question> questions;
 
     @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore  // Prevent serialization of testResults
     private List<TestResult> testResults;
-    public void setId(Long id) {
-        this.id = id;
+
+    public testDTO getDto() {
+        testDTO testDTO = new testDTO();
+
+        testDTO.setId(id);
+        testDTO.setTitle(title);
+        testDTO.setDescription(description);
+        testDTO.setTime(time);
+
+        return testDTO;
+    }
+
+    @Override
+    public String toString() {
+        return "Test{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                // Don't include questions in the toString to avoid recursion
+                '}';
     }
 }
+

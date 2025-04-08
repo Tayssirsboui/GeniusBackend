@@ -2,6 +2,7 @@ package tn.esprit.projet4arcticback.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import tn.esprit.projet4arcticback.dto.TestResultDTO;
 
 @Entity
 @Data
@@ -16,7 +17,17 @@ public class TestResult {
     @ManyToOne
     @JoinColumn(name = "test_id")
     private Test test;
-    public void setId(Long id) {
-        this.id = id;
+
+    public TestResultDTO getDto() {
+        TestResultDTO dto = new TestResultDTO();
+
+        dto.setId(id);
+        dto.setTotalQuestions(totalQuestions);
+        dto.setCorrectAnswers(correctAnswers);
+        dto.setPercentage(percentage);
+        dto.setTestName(test.getTitle());
+
+        return dto;
     }
+
 }

@@ -2,6 +2,8 @@ package tn.esprit.projet4arcticback.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import tn.esprit.projet4arcticback.dto.QuestionDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;  // Add the import for Jackson
 
 @Entity
 @Data
@@ -18,8 +20,27 @@ public class Question {
 
     @ManyToOne
     @JoinColumn(name = "test_id")
+    @JsonIgnore  // Prevent serialization of the associated Test
     private Test test;
-    public void setId(Long id) {
-        this.id = id;
+
+    public QuestionDTO getDto() {
+        QuestionDTO dto = new QuestionDTO();
+
+        dto.setId(id);
+        dto.setQuestionText(questionText);
+        dto.setOptionA(optionA);
+        dto.setOptionB(optionB);
+        dto.setOptionC(optionC);
+        dto.setOptionD(optionD);
+        dto.setCorrectOption(correctOption);
+
+        return dto;
+    }
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", questionText='" + questionText + '\'' +
+                '}';
     }
 }
