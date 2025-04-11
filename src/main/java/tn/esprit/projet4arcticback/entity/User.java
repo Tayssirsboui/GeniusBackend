@@ -1,38 +1,102 @@
 package tn.esprit.projet4arcticback.entity;
 
+import tn.esprit.projet4arcticback.utilities.UniqueEmail;
+import tn.esprit.projet4arcticback.utilities.ValidEmailDomain;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.validation.constraints.*;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.format.annotation.NumberFormat;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
+import java.io.Serializable;
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+
+@Data
+@Builder
 @AllArgsConstructor
-@Table(name = "users")
-public class User {
-    @Id
+@NoArgsConstructor
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+public class User implements Serializable , UserDetails, Principal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
-
-    @Column(name = "nom", length = 225, nullable = false)
+    @Id
+    private Long idUser;
     private String nom;
-
-    @Column(name = "prenom", length = 225, nullable = false)
     private String prenom;
+    @NotNull
+    @Email(message = "Email should be valid")
+    @Column(unique = true, nullable = false)
+    @ValidEmailDomain(domain = "esprit.tn")
+    private String email;
+    private String motDePasse;
 
-    @Column(name = "numero")
-    private Long numero; // `long` remplacé par `Long` pour éviter les valeurs nulles
 
-    @Column(name = "status", length = 225)
-    private String status;
+    @NotNull
+    @Pattern(regexp = "^\\+(?:[0-9] ?){6,14}[0-9]$", message = "Phone number must be in valid international format")
+    private String phoneNumber;
 
-    @Column(name = "competence", length = 225)
-    private String competence;
+    @Enumerated(EnumType.STRING)
+    private Role roles;
 
-    @ManyToOne
-    @JoinColumn(name = "roleId", nullable = false) // Correspond à l'attribut `roleId` de `Role`
-    private Role role;
+    private boolean accountLocked;
+    private boolean enabled;
+
+    @CreatedDate
+    @Column(nullable = false , updatable = false)
+    private LocalDateTime createdDate;
+    @LastModifiedDate
+    @Column(insertable = false)
+    private LocalDateTime LastModifiedDate;
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(roles.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return motDePasse;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+    public String fullName(){
+        return nom + " " + prenom;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !accountLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public String getName() {
+        return email;
+    }
 }
