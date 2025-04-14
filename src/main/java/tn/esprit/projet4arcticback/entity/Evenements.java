@@ -1,6 +1,8 @@
 package tn.esprit.projet4arcticback.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,16 +24,22 @@ public class Evenements {
     private Long id;
     private String titre;
     private String description;
-    private Date  dateDebut;
-    private Date  dateFin;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime   dateDebut;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime  dateFin;
     private String lieu;
     private String categorie;
     private Integer nbMaxParticipants;
     @Enumerated(EnumType.STRING)
     private StatutEvenement statut;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime dateCreation = LocalDateTime.now();
+    private String image; // Il peut être null ou vide
+
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evenement")
+    @JsonIgnore
     private Set<Participations> participations;
 
 }
