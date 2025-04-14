@@ -38,8 +38,8 @@ public class Evenements {
     private String image; // Il peut être null ou vide
 
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evenement")
-    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evenement", fetch = FetchType.EAGER)
+   // @JsonIgnore
     private Set<Participations> participations;
 
 }

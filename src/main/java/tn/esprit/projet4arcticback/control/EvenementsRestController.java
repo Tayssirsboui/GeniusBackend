@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tn.esprit.projet4arcticback.entity.Evenements;
 import tn.esprit.projet4arcticback.entity.StatutEvenement;
+import tn.esprit.projet4arcticback.repository.ParticipationsRepository;
 import tn.esprit.projet4arcticback.service.IEvenementsService;
 
 import java.io.File;
@@ -26,6 +27,8 @@ import java.util.List;
 public class EvenementsRestController {
 
     IEvenementsService evenementsService;
+
+    private final ParticipationsRepository  participationRepository;
 
     // http://localhost:8089/backend/evenements/retrieve-all-evenements
     @GetMapping("/retrieve-all-evenements")
@@ -173,6 +176,12 @@ public class EvenementsRestController {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'upload");
         }
+    }
+
+
+    @GetMapping("/count-participants/{idEvent}")
+    public Long countParticipants(@PathVariable Long idEvent) {
+        return participationRepository.countByEvenementId(idEvent);
     }
 
 }

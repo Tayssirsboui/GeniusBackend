@@ -27,7 +27,7 @@ public class Participations {
     private StatutParticipation statut;
 
     @ManyToOne
-   // @JsonIgnore
+    @JsonIgnore
     @JoinColumn(name = "evenement_id")
     private Evenements  evenement;
 

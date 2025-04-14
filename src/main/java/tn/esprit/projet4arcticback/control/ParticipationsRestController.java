@@ -2,12 +2,17 @@ package tn.esprit.projet4arcticback.control;
 
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tn.esprit.projet4arcticback.dto.ParticipationDTO;
 import tn.esprit.projet4arcticback.entity.Evenements;
 import tn.esprit.projet4arcticback.entity.Participations;
+import tn.esprit.projet4arcticback.entity.StatutParticipation;
 import tn.esprit.projet4arcticback.repository.EvenementsRepository;
+import tn.esprit.projet4arcticback.repository.ParticipationsRepository;
 import tn.esprit.projet4arcticback.service.IParticipationsService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -16,6 +21,8 @@ import java.util.List;
 public class ParticipationsRestController {
     IParticipationsService participationsService;
     private final EvenementsRepository evenementsRepository;
+    @Autowired
+    private ParticipationsRepository participationsRepository;
 
 
     // http://localhost:8089/backend/participations/retrieve-all-participations
@@ -41,26 +48,27 @@ public class ParticipationsRestController {
 
 
     @PostMapping("/add-participation")
-    public Evenements addParticipation(@RequestBody Participations p) {
-        try {
-            Long idEvent = p.getEvenement().getId();
-
-            Evenements fullEvent = evenementsRepository.findById(idEvent).orElseThrow(
-                    () -> new RuntimeException("Événement non trouvé avec id " + idEvent)
-            );
-
-            p.setEvenement(fullEvent);
-            participationsService.addParticipation(p);
-
-            // ✅ Recharger l'événement avec ses participations (EAGER fetch recommandé)
-            return evenementsRepository.findById(idEvent).orElseThrow();
-
-        } catch (Exception e) {
-            System.err.println("❌ Erreur backend lors de l'inscription :");
-            e.printStackTrace();
-            throw e;
+    public Evenements addParticipation(@RequestBody ParticipationDTO dto) {
+        Long idEvent = dto.getEvenementId();
+        if (idEvent == null) {
+            throw new IllegalArgumentException("L'événement est requis");
         }
+
+        Evenements event = evenementsRepository.findById(idEvent)
+                .orElseThrow(() -> new RuntimeException("Événement non trouvé"));
+
+        Participations participation = new Participations();
+        participation.setEvenement(event); // ✅ très important
+        participation.setStatut(dto.getStatut());
+        participation.setDateInscription(LocalDateTime.now());
+
+        participationsRepository.save(participation); // ✅ ENREGISTRE dans la BDD
+
+        // Retourner l’événement avec la nouvelle liste de participations
+        return evenementsRepository.findById(idEvent).orElseThrow();
     }
+
+
 
 
 
