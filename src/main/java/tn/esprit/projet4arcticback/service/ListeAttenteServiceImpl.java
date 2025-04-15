@@ -53,5 +53,7 @@ public class ListeAttenteServiceImpl implements IListeAttenteService {
         listeAttenteRepository.save(premier);
         System.out.println("🗃️ Statut de notification mis à jour");
     }
+
+
 }
 

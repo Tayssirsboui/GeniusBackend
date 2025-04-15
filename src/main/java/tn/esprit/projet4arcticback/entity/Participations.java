@@ -3,6 +3,7 @@ package tn.esprit.projet4arcticback.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class Participations {
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "evenement_id")
+   
     private Evenements  evenement;
 
 }

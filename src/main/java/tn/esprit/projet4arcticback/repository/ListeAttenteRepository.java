@@ -6,4 +6,6 @@ import tn.esprit.projet4arcticback.entity.ListeAttente;
 
 public interface ListeAttenteRepository extends JpaRepository<ListeAttente, Long> {
     ListeAttente findFirstByEvenementAndNotificationEnvoyeeFalseOrderByDateInscriptionAsc(Evenements evenement);
+    boolean existsByEvenementAndEmail(Evenements evenement, String email);
+
 }
