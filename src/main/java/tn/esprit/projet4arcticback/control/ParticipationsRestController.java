@@ -3,6 +3,7 @@ package tn.esprit.projet4arcticback.control;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.esprit.projet4arcticback.dto.ParticipationDTO;
 import tn.esprit.projet4arcticback.entity.Evenements;
@@ -10,6 +11,7 @@ import tn.esprit.projet4arcticback.entity.Participations;
 import tn.esprit.projet4arcticback.entity.StatutParticipation;
 import tn.esprit.projet4arcticback.repository.EvenementsRepository;
 import tn.esprit.projet4arcticback.repository.ParticipationsRepository;
+import tn.esprit.projet4arcticback.service.IListeAttenteService;
 import tn.esprit.projet4arcticback.service.IParticipationsService;
 
 import java.time.LocalDateTime;
@@ -20,10 +22,11 @@ import java.util.List;
 @RequestMapping("/participations")
 public class ParticipationsRestController {
     IParticipationsService participationsService;
+
     private final EvenementsRepository evenementsRepository;
     @Autowired
     private ParticipationsRepository participationsRepository;
-
+    private final IListeAttenteService listeAttenteService;
 
     // http://localhost:8089/backend/participations/retrieve-all-participations
     @GetMapping("/retrieve-all-participations")
@@ -75,10 +78,10 @@ public class ParticipationsRestController {
 
 
     // http://localhost:8089/backend/participations/remove-participation/{participation-id}
-    @DeleteMapping("/remove-participation/{participation-id}")
-    public void removeParticipation(@PathVariable("participation-id") Long participationId) {
-        participationsService.removeParticipation(participationId);
-    }
+   // @DeleteMapping("/remove-participation/{participation-id}")
+  //  public void removeParticipation(@PathVariable("participation-id") Long participationId) {
+      //  participationsService.removeParticipation(participationId);
+  //  }
 
     // http://localhost:8089/backend/participations/modify-participation
     @PutMapping("/modify-participation")
@@ -86,6 +89,20 @@ public class ParticipationsRestController {
         Participations participation = participationsService.modifyParticipation(p);
         return participation;
     }
+    @DeleteMapping("/annuler/{idParticipation}")
+    public ResponseEntity<Void> annulerParticipation(@PathVariable Long idParticipation) {
+        Participations participation = participationsRepository.findById(idParticipation)
+                .orElseThrow(() -> new RuntimeException("Participation non trouvée"));
+
+        Evenements evenement = participation.getEvenement();
+        participationsRepository.delete(participation);
+
+        // ✅ CETTE LIGNE DOIT ÊTRE PRÉSENTE
+        listeAttenteService.notifierPremierEnAttente(evenement);
+
+        return ResponseEntity.noContent().build();
+    }
+
 
 
 }
