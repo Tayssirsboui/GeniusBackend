@@ -27,10 +27,12 @@ public class Participations {
     @Enumerated(EnumType.STRING )
     private StatutParticipation statut;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinColumn(name = "evenement_id")
-   
+
     private Evenements  evenement;
+    @Column(name = "utilisateur_id")
+    private Long utilisateurId; // temporaire, jusqu’à ce que l'entité Utilisateur soit intégrée
 
 }

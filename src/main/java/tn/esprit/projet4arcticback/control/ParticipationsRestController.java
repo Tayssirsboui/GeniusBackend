@@ -53,23 +53,23 @@ public class ParticipationsRestController {
     @PostMapping("/add-participation")
     public Evenements addParticipation(@RequestBody ParticipationDTO dto) {
         Long idEvent = dto.getEvenementId();
-        if (idEvent == null) {
-            throw new IllegalArgumentException("L'événement est requis");
-        }
 
         Evenements event = evenementsRepository.findById(idEvent)
                 .orElseThrow(() -> new RuntimeException("Événement non trouvé"));
 
         Participations participation = new Participations();
-        participation.setEvenement(event); // ✅ très important
+        participation.setEvenement(event);
         participation.setStatut(dto.getStatut());
         participation.setDateInscription(LocalDateTime.now());
 
-        participationsRepository.save(participation); // ✅ ENREGISTRE dans la BDD
+        // 🟢 N'oublie pas cette ligne :
+        participation.setUtilisateurId(dto.getUtilisateurId());
 
-        // Retourner l’événement avec la nouvelle liste de participations
+        participationsRepository.save(participation);
+
         return evenementsRepository.findById(idEvent).orElseThrow();
     }
+
 
 
 
@@ -101,6 +101,11 @@ public class ParticipationsRestController {
         listeAttenteService.notifierPremierEnAttente(evenement);
 
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/evenements-par-utilisateur/{utilisateurId}")
+    public ResponseEntity<List<Evenements>> getEvenementsParUtilisateur(@PathVariable Long utilisateurId) {
+        List<Evenements> events = participationsService.getEvenementsByUtilisateurId(utilisateurId);
+        return ResponseEntity.ok(events);
     }
 
 

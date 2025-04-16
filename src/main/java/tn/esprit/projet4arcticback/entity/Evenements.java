@@ -3,6 +3,7 @@ package tn.esprit.projet4arcticback.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -38,8 +40,9 @@ public class Evenements {
     private String image; // Il peut être null ou vide
 
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evenement", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evenement", fetch = FetchType.EAGER, orphanRemoval = true)
    // @JsonIgnore
-    private Set<Participations> participations;
+    @JsonIgnoreProperties("evenement") // évite la récursion
+    private List<Participations> participations;
 
 }

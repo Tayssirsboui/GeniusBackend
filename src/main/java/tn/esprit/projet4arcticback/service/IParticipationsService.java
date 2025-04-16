@@ -1,5 +1,6 @@
 package tn.esprit.projet4arcticback.service;
 
+import tn.esprit.projet4arcticback.entity.Evenements;
 import tn.esprit.projet4arcticback.entity.Participations;
 
 import java.util.List;
@@ -10,4 +11,7 @@ public interface IParticipationsService {
     Participations addParticipation(Participations participation);
     void removeParticipation(Long idParticipation);
     Participations modifyParticipation(Participations participation);
+
+    List<Evenements> getEvenementsByUtilisateurId(Long utilisateurId);
+
 }

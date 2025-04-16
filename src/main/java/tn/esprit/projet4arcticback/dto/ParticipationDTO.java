@@ -9,4 +9,5 @@ import tn.esprit.projet4arcticback.entity.StatutParticipation;
 public class ParticipationDTO {
     private Long evenementId;
     private StatutParticipation statut;
+    private Long utilisateurId; // pour calendar
 }
