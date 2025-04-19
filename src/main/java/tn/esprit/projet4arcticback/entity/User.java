@@ -99,4 +99,12 @@ public class User implements Serializable , UserDetails, Principal {
     public String getName() {
         return email;
     }
+
+
+    // constructeur(s)…
+
+    @Lob
+    private String image;
+
+
 }

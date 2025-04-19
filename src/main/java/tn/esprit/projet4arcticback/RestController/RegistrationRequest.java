@@ -20,6 +20,9 @@ public class RegistrationRequest {
     @NotBlank(message = "Firstname is mandatory")
     private String nom;
 
+    private String image;
+
+
     @NotEmpty(message = "Lastname is mandatory")
     @NotBlank(message = "Lastname is mandatory")
     private String prenom;

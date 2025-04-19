@@ -51,6 +51,7 @@ public class AuthentificationService {
                 .phoneNumber(request.getPhoneNumber())
                 .motDePasse(passwordEncoder.encode(request.getMotDePasse()))
                 .enabled(false)
+                .image(request.getImage())
                 .accountLocked(false)
                 .roles(request.getRoles())
                 .build();

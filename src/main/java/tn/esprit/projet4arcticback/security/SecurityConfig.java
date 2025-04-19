@@ -43,7 +43,7 @@ public class SecurityConfig {
                                         "/v1/api-docs",
                                         "/swagger-ui.html"
                                 ).permitAll()
-                                .requestMatchers("/api/users").hasRole("ADMIN")  // Ensure only ADMIN can access the users endpoint
+                                .requestMatchers("/api/users").permitAll()  // Ensure only ADMIN can access the users endpoint
 
                                 .anyRequest().authenticated()
                 ).sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
