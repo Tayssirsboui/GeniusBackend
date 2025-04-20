@@ -30,10 +30,10 @@ Content-Type: multipart/form-data; boundary=boundary
 Content-Disposition: form-data; name="file1"; filename="image1.jpg"
 Content-Type: image/jpeg
 
-< C:/Users/bekir/OneDrive/Bureau/Nouveau dossier/GeniusBackend/src/main/resources/static/images/hh@esprit.tn_test.jpg
+< C:\Users\bekir\OneDrive\Bureau\Nouveau dossier\GeniusBackend\src\main\resources\static\images\hh@esprit.tn_test.jpg
 --boundary
 Content-Disposition: form-data; name="file2"; filename="image2.jpg"
 Content-Type: image/jpeg
 
-< C:/Users/bekir/OneDrive/Bureau/Nouveau dossier/GeniusBackend/src/main/resources/static/images/kj@esprit.tn_test.jpg
+< C:\Users\bekir\OneDrive\Bureau\Nouveau dossier\GeniusBackend\src\main\resources\static\images\kj@esprit.tn_test.jpg
 --boundary--

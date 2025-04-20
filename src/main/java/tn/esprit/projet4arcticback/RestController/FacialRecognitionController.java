@@ -124,8 +124,10 @@ public class FacialRecognitionController {
         }
     }
 
-    @PostMapping("/compare-faces")
-    public ResponseEntity<?> compareFaces(@RequestParam("file1") MultipartFile file) {
+    /*@PostMapping("/compare-faces")
+    public ResponseEntity<?> compareFaces(
+            @RequestParam("file1") MultipartFile file
+    ) {
         logger.info("Entering compareFaces endpoint - File: {}", file.getOriginalFilename());
         Map<String, Object> response = new HashMap<>();
 
@@ -166,7 +168,109 @@ public class FacialRecognitionController {
                 logger.debug("Added dynamic image to request body");
 
                 // Load static image from filesystem
-                String imagePath = "src/main/resources/static/images" + user.getImage();
+
+                String imagePath = "C:/Users/bekir/OneDrive/Bureau/Nouveau dossier/GeniusBackend/src/main/resources/static/images/" + user.getImage();
+                logger.debug("Looking for user image at: {}", imagePath);
+
+                File staticFile = new File(imagePath);
+                if (staticFile.exists()) {
+                    logger.debug("Found user image file");
+                    body.add("file2", new FileSystemResource(staticFile));
+
+                    // Create request
+                    HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+                    String pythonApiUrl = "http://127.0.0.1:8000/compare-faces/";
+                    logger.debug("Preparing request to Python API at: {}", pythonApiUrl);
+
+                    RestTemplate restTemplate = new RestTemplate();
+                    logger.debug("Sending request to facial recognition service");
+                    ResponseEntity<String> pythonResponse = restTemplate.postForEntity(pythonApiUrl, requestEntity, String.class);
+
+                    logger.debug("Received response from facial recognition service: {}", pythonResponse.getBody());
+
+                    // Parse the JSON response
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    FaceMatchResponse responseF = objectMapper.readValue(pythonResponse.getBody(), FaceMatchResponse.class);
+
+                    if (responseF.isMatch()) {
+                        logger.info("Facial match found for user: {}", user.getName());
+
+                        // Generate JWT token
+                        var claims = new HashMap<String, Object>();
+                        claims.put("fullName", user.fullName());
+                        claims.put("role", user.getRoles().name());
+                        String token = jwtUtil.generateToken2(claims, user);
+                        logger.debug("Generated JWT token for user: {}", user.getName());
+
+                        return ResponseEntity.ok(new AuthentificationResponse(token));
+                    } else {
+                        logger.debug("No match found for user: {}", user.getName());
+                    }
+                } else {
+                    logger.warn("Image file not found for user: {} at path: {}", user.getName(), imagePath);
+                }
+            }
+
+            logger.info("No facial matches found for any registered users");
+            response.put("message", "No matching faces found");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            logger.error("Error in compareFaces endpoint", e);
+            response.put("error", "An error occurred: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }*/
+
+    @PostMapping(value = "/compare-faces", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> compareFaces(@RequestPart("file1") MultipartFile file) {
+        logger.info("Entering compareFaces endpoint - File: {}", file.getOriginalFilename());
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (file.isEmpty()) {
+                logger.error("Received empty file in compareFaces");
+                return ResponseEntity.badRequest().body("File is empty");
+            }
+
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                logger.error("Invalid file type: {}", contentType);
+                return ResponseEntity.badRequest().body("Only image files are allowed");
+            }
+
+            logger.debug("Retrieving all users from database");
+            List<User> listUser = userService.getAllUsers();
+            List<User> listUserfiltrer = new ArrayList<>();
+
+            logger.debug("Filtering users with images");
+            for (User user : listUser) {
+                if (user.getImage() != null) {
+                    listUserfiltrer.add(user);
+                }
+            }
+
+            logger.info("Found {} users with images", listUserfiltrer.size());
+            if (listUserfiltrer.isEmpty()) {
+                logger.warn("No users with images found in database");
+                response.put("message", "No registered users with images found");
+                return ResponseEntity.ok(response);
+            }
+
+            for (User user : listUserfiltrer) {
+                logger.debug("Processing user: {} with image: {}", user.getName(), user.getImage());
+
+                // Prepare dynamic image (sent from Angular)
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+                logger.debug("Set headers for multipart form data");
+
+                MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+                body.add("file1", new MultipartInputStreamFileResource(file.getInputStream(), file.getOriginalFilename()));
+                logger.debug("Added dynamic image to request body");
+
+                // Load static image from filesystem
+                String imagePath = user.getImage();
                 logger.debug("Looking for user image at: {}", imagePath);
 
                 File staticFile = new File(imagePath);
