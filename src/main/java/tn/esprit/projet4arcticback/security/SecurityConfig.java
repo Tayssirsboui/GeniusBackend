@@ -41,7 +41,10 @@ public class SecurityConfig {
                                         "/swagger-ui/**",
                                         "/webjars/**",
                                         "/v1/api-docs",
-                                        "/swagger-ui.html"
+                                        "/swagger-ui.html"  ,
+                                        "/api/facial/upload",         // ➕ Ajoute ce endpoint ici
+                                        "/api/facial/verify",         // ➕ et celui de vérification si besoin
+                                        "/api/facial/compare-faces"
                                 ).permitAll()
                                 .requestMatchers("/api/users").permitAll()  // Ensure only ADMIN can access the users endpoint
 

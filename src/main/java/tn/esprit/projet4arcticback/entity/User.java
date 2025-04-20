@@ -104,6 +104,7 @@ public class User implements Serializable , UserDetails, Principal {
     // constructeur(s)…
 
     @Lob
+    @Column(columnDefinition = "TEXT")
     private String image;
 
 

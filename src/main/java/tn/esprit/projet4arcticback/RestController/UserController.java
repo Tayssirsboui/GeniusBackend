@@ -8,6 +8,7 @@ import tn.esprit.projet4arcticback.service.UserService;
 import java.security.Principal;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -32,5 +33,10 @@ public class UserController {
 
         userservice.changePassword(request, connectedUser);
         return ResponseEntity.ok().build();
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        User user = userservice.getUserById(id); // Pas besoin d'Optional ici
+        return ResponseEntity.ok(user);
     }
 }
